@@ -1,0 +1,6 @@
+__pycache__
+pyvenv_3.10.12
+.cache/*
+.logs
+tests
+dev-manual.md
