@@ -1,0 +1,354 @@
+
+Screen {
+    background: transparent;
+    padding: 0 0;
+}
+
+SearchModeScreen {
+    background: white;
+    color:black;
+}
+
+#search_results {
+    width:100%;
+}
+
+#search_results_title {
+    height: 2;
+    background: darkblue;
+    color: white;
+    width: 100%;
+    align: center middle;
+    content-align: center middle;
+}
+
+.block_progress_bar {
+    height: 5;
+    width:100%;
+    background: red;
+}
+
+ViewModeScreen {
+    layout: grid;
+    grid-size: 4 1;
+}
+
+.full_text_search_result {
+    height: auto;
+}
+
+.search_result_button {
+    width: 100%;
+}
+
+.search_result_lines {
+    width: 100%;
+}
+
+.search_result_lines {
+}
+
+#progress_update {
+    height: 2;
+    color: black;
+}
+
+#file_options_container {
+    layout: grid;
+    grid-size:3 1;
+    height: auto;
+    width:100%;
+}
+
+#create_file_btn {
+    background: rgba(0,255,0,0.5);
+    border: solid rgba(0,255,0,0.5);
+    color: black;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#create_folder_btn {
+    background: rgba(0,200,0,1);
+    border: solid rgba(0,200,0,1);
+    color: white;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#delete_file_btn {
+    background: rgba(255,30,0,0.8);
+    color: black;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+    border_title_color:white;
+    border: solid white;
+}
+
+#open_in_file_manager {
+    width:100%;
+    background: rgba(200,200,50,0.5);
+    color:black;
+    margin: 0 1;
+    padding: 0 1;
+}
+
+#validator_response {
+    width:100%;
+    align: center middle;
+    padding: 1 1;
+    margin: 1 1;
+}
+
+#search_box {
+    border: solid black;
+}
+
+#file_options_container_toc {
+    layout: grid;
+    grid-size:3 1;
+    height: auto;
+    width:100%;
+}
+
+#create_file_btn_toc {
+    background: rgba(0,255,0,0.5);
+    border: solid rgba(0,255,0,0.5);
+    color: black;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#create_folder_btn_toc {
+    background: rgba(0,200,0,1);
+    border: solid rgba(0,200,0,1);
+    color: white;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#delete_file_btn_toc {
+    background: rgba(255,30,0,0.8);
+    color: black;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+    border_title_color:white;
+    border: solid white;
+}
+
+#open_in_file_manager_toc {
+    width:100%;
+    background: rgba(200,200,50,0.5);
+    color:black;
+    margin: 0 1;
+    padding: 0 1;
+}
+
+#validator_response_toc {
+    width:100%;
+    align: center middle;
+    padding: 1 1;
+    margin: 1 1;
+}
+
+#search_box_toc {
+    border: solid black;
+}
+
+#dir_tree_tab {
+    hatch: left black 45%; 
+}
+
+#toc_tree_tab {
+    hatch: right black 45%; 
+}
+
+DirectoryTree {
+    color:black;
+    width:100%;
+    align: center middle;
+    padding: 1 1;
+    margin: 1 1;
+    border: solid black;
+}
+
+.img_container {
+    width:100%;
+    align: center middle;
+    content-align: center middle;
+    margin: 0 0;
+    padding: 0 0;
+}
+
+
+
+#md_content {
+    column-span: 3;
+    row-span:1;
+}
+
+#tabs {
+    row-span: 1;
+    column-span: 1;
+}
+
+#dir_tree {
+    padding: 1 1;
+}
+
+.app_container {
+    padding: 0 2;
+}
+
+.md_line {
+    width:100%;
+    min-height:0;
+    border: none;
+    content-align: left middle;
+    align: left middle;
+    margin: 0 0;
+    padding: 0;
+}
+
+.h1 {
+    background: blue;
+    color:white;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+.h2 {
+    background: rgba(0,0,255,0.8);
+    color: white;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+.h3 {
+    background: rgba(0,0,255,0.6);
+    color: white;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+.h4 {
+    background: rgba(0,0,255,0.4);
+    color: white;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+.h5 {
+    background: rgba(0,0,255,0.4);
+    color: black;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+.h6 {
+    background: rgba(0,0,255,0.2);
+    color: black;
+    content-align: left middle;
+    align: center middle;
+    padding: 1 1;
+    text-style: bold ;
+}
+
+Image {
+    background: white;
+    color:transparent;
+    padding:0 0 0 0;
+    margin:0;
+    align: center middle;
+    content-align: center middle;
+}
+
+.img {
+    border: solid black;
+    border_title_align: left;
+    align: center middle;
+    content-align: center middle;
+    padding: 0 0;
+    margin: 0 0;
+}
+
+ListView {
+    width: 30;
+    height: auto;
+    margin: 2 2;
+}
+
+Label {
+    padding: 0 1;
+}
+
+.newline {
+    padding: 0 0;
+    height: 1;
+}
+
+DataTable {
+    content-align: center middle;
+    align: center middle;
+    border: solid black;
+    border_title_align: left;
+}
+
+.block_quote {
+    border: solid white;
+    background: rgba(0,0,255,0.2);
+    opacity:1;
+    color: black;
+    max-width: 100%;
+    content-align: left middle;
+    align: center middle;
+    margin: 1 1;
+}
+
+.render_error {
+    border: solid white;
+    background: red;
+    opacity:0.8;
+    color: white;
+    max-width: 60%;
+    content-align: center middle;
+    align: center middle;
+}
+
+TextArea {
+    height: auto;
+    border_title_background: lightblue;
+    border_title_color: black;
+    border_subtitle_background: white;
+    border_subtitle_color: black;
+}
+
+.document_title {
+    background: darkblue;
+    color:white;
+    border: solid white;
+    content-align: center middle;
+    align: center middle;
+}
