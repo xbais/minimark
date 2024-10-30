@@ -20,7 +20,7 @@ except (IOError, ImportError):
     long_description = open('README.md').read()
 
 
-setup(name='MiniMark',
+setup(name='minimark',
     version = '0.0.1',
     description='MiniMark : The CLI Markdown Editor / Viewer',
     long_description_content_type = 'text/markdown',
@@ -29,7 +29,7 @@ setup(name='MiniMark',
     author_email='xbais@duck.com',
     url='https://github.com/xbais/minimark',
     package_dir = {'':'src'},
-    packages=find_packages(),
+    packages=['minimark'],
     install_requires=[
         'numpy',    
         'argparse', 
