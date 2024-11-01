@@ -1,5 +1,5 @@
 # MiniMark : The CLI Markdown Editor / Viewer
-![Trailer](https://github.com/xbais/minimark/_resources/trailer.gif)
+![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
 ## Installation Pre-requisites
 1. Install NVM Package Manager : `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`
 2. Install Pupetteer : `npx puppeteer browsers install chrome-headless-shell`
