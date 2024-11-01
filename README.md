@@ -6,7 +6,7 @@
 </p>
 
 ![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
-## Installation Pre-requisites
+## Installation of Pre-requisites
 1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : 
   ```bash
   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
