@@ -47,6 +47,7 @@ setup(name='minimark',
         'argparse', 
         'textual',
         'textual_image',
+        'matplotlib',
         'pillow',
         'cairosvg',
         'tqdm',
@@ -54,6 +55,7 @@ setup(name='minimark',
         'tree-sitter==0.21.3',
         'tree-sitter-languages==1.10.2',
         'asyncio',
+        'requests',
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
@@ -63,7 +65,7 @@ setup(name='minimark',
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'module_name=your_package.__main__:main',  # Point to the main function
+            'minimark=minimark.__main__:main',  # Point to the main function
         ],
     },
     cmdclass={

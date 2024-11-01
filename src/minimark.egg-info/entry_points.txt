@@ -1,2 +1,2 @@
 [console_scripts]
-module_name = your_package.__main__:main
+minimark = minimark.__main__:main
