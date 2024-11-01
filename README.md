@@ -7,10 +7,22 @@
 
 ![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
 ## Installation Pre-requisites
-1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`
-2. Install [Pupetteer](https://pptr.dev) : `npx puppeteer browsers install chrome-headless-shell`
-3. Install [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli) : `npm install -g @mermaid-js/mermaid-cli`
-4. Install [Ripgrep](https://github.com/BurntSushi/ripgrep) Utility : `sudo apt install ripgrep`
+1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : 
+  ```bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  ```
+2. Install [Pupetteer](https://pptr.dev) : 
+  ```bash
+  npx puppeteer browsers install chrome-headless-shell
+  ```
+3. Install [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli) : 
+  ```bash
+  npm install -g @mermaid-js/mermaid-cli
+  ```
+4. Install [Ripgrep](https://github.com/BurntSushi/ripgrep) Utility :
+  ```bash
+  sudo apt install ripgrep
+  ```
 
 ## Installation & Usage
 1. Install MiniMark : (in Ubuntu < 24.04 LTS) `pip3 install minimark`, (in Ubuntu 24.04 LTS) `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
