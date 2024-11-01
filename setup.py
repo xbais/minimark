@@ -57,10 +57,12 @@ setup(name='minimark',
         'asyncio',
         'requests',
     ],
+    license='GPLv3',
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: GNU General Public License v3',
-        'Operating System :: Linux',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'Operating System :: POSIX :: Linux',
+
     ],
     python_requires='>=3.6',
     entry_points={
@@ -70,5 +72,8 @@ setup(name='minimark',
     },
     cmdclass={
         'install': PostInstallCommand,
-    }
+    },
+    package_data={
+        'minimark':['data/*'],
+    },
 )

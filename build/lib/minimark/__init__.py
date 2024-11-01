@@ -38,6 +38,22 @@ from textual.containers import Center, Middle
 from textual.widgets import ProgressBar
 import asyncio
 import traceback
+from pathlib import Path
+
+def get_cwd() -> str:
+    # Get the directory of the currently executing script
+    return str(Path(__file__).resolve().parent)
+
+def create_dir(dir:str, overwrite:bool=False) -> str:
+    if os.path.exists(dir):
+        if overwrite:
+            # Remove the directory and its contents recursively
+            pass
+        else:
+            return dir
+    # Create directory
+    os.makedirs(dir)
+    return dir
 
 def async_wrapper(func):
     """
@@ -242,7 +258,7 @@ def mermaid_to_png(mermaid_code:str, output_path:str):
     
     # Use mermaid.cli to render the diagram
     try:
-        _command = ['mmdc', '-i', mermaid_file, '-o', output_path, f"--puppeteerConfigFile {os.path.join(CWD, 'puppeteer-config.json')}"]
+        _command = ['mmdc', '-i', mermaid_file, '-o', output_path, f"--puppeteerConfigFile {os.path.join(CWD, 'data', 'puppeteer-config.json')}"]
         app_logger.log(f'Using command : {" ".join(_command)}')
         os.system(' '.join(_command))
     except subprocess.CalledProcessError as e:
@@ -1121,7 +1137,7 @@ class EditModeScreen(Screen):
 class MiniMark(App):
     """A Textual app to render markdown (md) documents"""
 
-    CSS_PATH = "main.tcss"
+    CSS_PATH = "data/main.tcss"
     BINDINGS = [("r", "reload", "Reload Doc"), ("f", "switch_to_nav", "File Nav Mode")]
 
     def __init__(self, start_screen:str='view'):
@@ -1140,7 +1156,6 @@ class MiniMark(App):
         elif self.start_screen == 'help':
             pass
             #self.push_screen(HelpScreen())
-        
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
@@ -1158,25 +1173,27 @@ class MiniMark(App):
             self.push_screen(NavScreen())
             self.notify("Switched to Nav Mode", severity='information')
         '''
-        def action_reload(self):
-            """Replace the screen with a fresh instance."""
-            global node_counter
-            self.remove_existing_screen(ViewModeScreen)
-            self.push_screen(ViewModeScreen())  # Push a new instance of the screen
-            node_counter.refresh()
-            self.notify("Content Refreshed!")
-        
-        def remove_existing_screen(self, screen_class):
-            """Check and remove any existing instances of the screen class from the stack."""
-            for screen in self.screen_stack:
-                if isinstance(screen, screen_class):
-                    self.pop_screen()  # Remove the screen from the stack
+
+    def action_reload(self):
+        """Replace the screen with a fresh instance."""
+        global node_counter
+        self.remove_existing_screen(ViewModeScreen)
+        self.push_screen(ViewModeScreen())  # Push a new instance of the screen
+        node_counter.refresh()
+        self.notify("Content Refreshed!")
+    
+    def remove_existing_screen(self, screen_class):
+        """Check and remove any existing instances of the screen class from the stack."""
+        for screen in self.screen_stack:
+            if isinstance(screen, screen_class):
+                self.pop_screen()  # Remove the screen from the stack
 
 CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*17
 
 def main():
     global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR
-    CWD = os.getcwd()
+    
+    CWD = get_cwd() #os.getcwd()
 
     parser = argparse.ArgumentParser(description='A robust CLI app to render static markdown')
     parser.add_argument('-file', help='Location of the markdown file to render', default='')
@@ -1189,7 +1206,8 @@ def main():
         md_file = './help.md'
         PARENT_PATH = CWD
         app = MiniMark()
-    CACHE_DIR = '.cache'
+    
+    CACHE_DIR = create_dir(os.path.join(CWD,'.cache'), overwrite=False) # returns a string
     _trash_dir = os.path.join(CACHE_DIR, '.trash')
 
     # Initialise doc tree
