@@ -30,3 +30,7 @@
 ## 🔷 Installation & Usage
 - For Ubuntu < 24.04 LTS : `pip3 install minimark`
 - For Ubuntu == 24.04 LTS : `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
+
+## 🔷 Links
+- Official Webpage : https://xbais.net/minimark.html
+- PyPI : https://pypi.org/project/minimark/0.0.1.2/#description
