@@ -1,0 +1,15 @@
+Metadata-Version: 2.1
+Name: minimark
+Version: 0.0.1.1
+Summary: MiniMark : The CLI Markdown Editor / Viewer
+Home-page: https://github.com/xbais/minimark
+Author: Aakash Singh Bais
+Author-email: xbais@duck.com
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License v3
+Classifier: Operating System :: Linux
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# MiniMark : The CLI Markdown Editor / Viewer

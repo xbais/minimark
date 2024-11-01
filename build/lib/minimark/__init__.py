@@ -1145,79 +1145,86 @@ class MiniMark(App):
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
-    '''
-    def action_switch_to_view(self) -> None:
-        """Action to switch to View Mode."""
-        self.remove_existing_screen(EditModeScreen)
-        self.push_screen(EditModeScreen())
-        self.notify("Switched to View Mode", severity='information')
+        '''
+        def action_switch_to_view(self) -> None:
+            """Action to switch to View Mode."""
+            self.remove_existing_screen(EditModeScreen)
+            self.push_screen(EditModeScreen())
+            self.notify("Switched to View Mode", severity='information')
 
-    def action_switch_to_nav(self) -> None:
-        """Action to switch to View Mode."""
-        self.remove_existing_screen(NavScreen)
-        self.push_screen(NavScreen())
-        self.notify("Switched to Nav Mode", severity='information')
-    '''
-    def action_reload(self):
-        """Replace the screen with a fresh instance."""
-        global node_counter
-        self.remove_existing_screen(ViewModeScreen)
-        self.push_screen(ViewModeScreen())  # Push a new instance of the screen
-        node_counter.refresh()
-        self.notify("Content Refreshed!")
-    
-    def remove_existing_screen(self, screen_class):
-        """Check and remove any existing instances of the screen class from the stack."""
-        for screen in self.screen_stack:
-            if isinstance(screen, screen_class):
-                self.pop_screen()  # Remove the screen from the stack
+        def action_switch_to_nav(self) -> None:
+            """Action to switch to View Mode."""
+            self.remove_existing_screen(NavScreen)
+            self.push_screen(NavScreen())
+            self.notify("Switched to Nav Mode", severity='information')
+        '''
+        def action_reload(self):
+            """Replace the screen with a fresh instance."""
+            global node_counter
+            self.remove_existing_screen(ViewModeScreen)
+            self.push_screen(ViewModeScreen())  # Push a new instance of the screen
+            node_counter.refresh()
+            self.notify("Content Refreshed!")
+        
+        def remove_existing_screen(self, screen_class):
+            """Check and remove any existing instances of the screen class from the stack."""
+            for screen in self.screen_stack:
+                if isinstance(screen, screen_class):
+                    self.pop_screen()  # Remove the screen from the stack
 
-CWD = os.getcwd()
+CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*17
 
-parser = argparse.ArgumentParser(description='A robust CLI app to render static markdown')
-parser.add_argument('-file', help='Location of the markdown file to render', default='')
-args = parser.parse_args()
-md_file = args.file
-if md_file:
-    PARENT_PATH = CWD if '/' not in md_file else '/'.join(md_file.split('/')[:-1])
-    app = MiniMark()
-else:
-    md_file = './help.md'
-    PARENT_PATH = CWD
-    app = MiniMark()
-CACHE_DIR = '.cache'
-_trash_dir = os.path.join(CACHE_DIR, '.trash')
+def main():
+    global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR
+    CWD = os.getcwd()
 
-# Initialise doc tree
-TOC_TREE = TOC()
+    parser = argparse.ArgumentParser(description='A robust CLI app to render static markdown')
+    parser.add_argument('-file', help='Location of the markdown file to render', default='')
+    args = parser.parse_args()
+    md_file = args.file
+    if md_file:
+        PARENT_PATH = CWD if '/' not in md_file else '/'.join(md_file.split('/')[:-1])
+        app = MiniMark()
+    else:
+        md_file = './help.md'
+        PARENT_PATH = CWD
+        app = MiniMark()
+    CACHE_DIR = '.cache'
+    _trash_dir = os.path.join(CACHE_DIR, '.trash')
 
-# Initialise logger
-app_logger = logger()
-print = app_logger.log 
+    # Initialise doc tree
+    TOC_TREE = TOC()
 
-# Node counter
-node_counter = NodeCounter()
+    # Initialise logger
+    app_logger = logger()
+    print = app_logger.log 
 
-# Height factor
-width_factor = 2.1
+    # Node counter
+    node_counter = NodeCounter()
 
-# Initialise all Screens
-VIEW_MODE_SCREEN = ViewModeScreen()
-NAV_SCREEN = NavScreen()
-HELP_SCREEN = HelpScreen()
-EDIT_SCREEN = EditModeScreen()
-SEARCH_SCREEN = SearchModeScreen()
+    # Height factor
+    width_factor = 2.1
 
-# If cache directory does not exist, create it, else clean it
-if not os.path.isdir(CACHE_DIR):
-    os.mkdir(CACHE_DIR)
-else:
-    shutil.rmtree(CACHE_DIR)
-    os.mkdir(CACHE_DIR)
+    # Initialise all Screens
+    VIEW_MODE_SCREEN = ViewModeScreen()
+    NAV_SCREEN = NavScreen()
+    HELP_SCREEN = HelpScreen()
+    EDIT_SCREEN = EditModeScreen()
+    SEARCH_SCREEN = SearchModeScreen()
 
-if not os.path.isdir(_trash_dir):
-    os.mkdir(_trash_dir)
+    # If cache directory does not exist, create it, else clean it
+    if not os.path.isdir(CACHE_DIR):
+        os.mkdir(CACHE_DIR)
+    else:
+        shutil.rmtree(CACHE_DIR)
+        os.mkdir(CACHE_DIR)
 
-search_results = [] # This will store all search results before rendering
+    if not os.path.isdir(_trash_dir):
+        os.mkdir(_trash_dir)
 
-app.run()
+    search_results = [] # This will store all search results before rendering
+
+    app.run()
+
+if __name__ == '__main__':
+    main()

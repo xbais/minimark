@@ -1,0 +1,13 @@
+LICENSE
+README.md
+setup.py
+src/minimark/__init__.py
+src/minimark/__main__.py
+src/minimark.egg-info/PKG-INFO
+src/minimark.egg-info/SOURCES.txt
+src/minimark.egg-info/dependency_links.txt
+src/minimark.egg-info/entry_points.txt
+src/minimark.egg-info/requires.txt
+src/minimark.egg-info/top_level.txt
+tests/test-mdmd.py
+tests/test-rich-image.py
