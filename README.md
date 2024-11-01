@@ -1,6 +1,10 @@
 # MiniMark : The CLI Markdown Editor / Viewer
 ![OS](https://img.shields.io/badge/OS-Linux-green) ![Python Version](https://img.shields.io/pypi/pyversions/minimark) ![License](https://img.shields.io/github/license/xbais/minimark) ![version](https://img.shields.io/pypi/v/minimark)
 
+<p align="center">
+  <img src="./_resources/logo.jpeg" alt="Sublime's custom image" style='width:300px'/>
+</p>
+
 ![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
 ## Installation Pre-requisites
 1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`
