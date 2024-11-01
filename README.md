@@ -25,9 +25,5 @@
   ```
 
 ## 🔷 Installation & Usage
-1. Install MiniMark : (in Ubuntu < 24.04 LTS) `pip3 install minimark`, (in Ubuntu 24.04 LTS) `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
-2. Create Alias for MiniMark : add the following line at the end of your `~/.bashrc` file (if you use Bash), or your `~/.zshrc` file (if you use ZSH) : `alias minimark='python3 -m minimark'`
-Now, you can run MiniMark using the terminal command : `minimark` !! Enjoy!
-
-NOTE:
-- If you dont want to create an alias, you can still run MiniMark using the command : `python3 -m minimark`
+- For Ubuntu < 24.04 LTS : `pip3 install minimark`
+- For Ubuntu == 24.04 LTS : `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
