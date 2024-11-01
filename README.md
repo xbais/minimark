@@ -23,7 +23,10 @@
   ```bash
   sudo apt install ripgrep
   ```
-
+5. Install Kitty :
+  ```bash
+  sudo apt install kitty
+  ```
 ## 🔷 Installation & Usage
 - For Ubuntu < 24.04 LTS : `pip3 install minimark`
 - For Ubuntu == 24.04 LTS : `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
