@@ -34,8 +34,10 @@
 - For Ubuntu < 24.04 LTS : `pip3 install minimark`
 - For Ubuntu == 24.04 LTS : `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
 
-**Usage**
-To open a markdown file with minimark, simply use the command : `minimark -file /location/to/my_markdown_file.md`
+### **Usage**
+To open a markdown file with minimark, simply... 
+1. Open the Kitty terminal emulator.
+2. Within Kitty, use the command : `minimark -file /location/to/my_markdown_file.md`
 
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
