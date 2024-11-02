@@ -39,6 +39,18 @@ To open a markdown file with minimark, simply...
 1. Open the Kitty terminal emulator.
 2. Within Kitty, use the command : `minimark -file /location/to/my_markdown_file.md`
 
+## 🔷 Features
+(🟢 = Impemented, 🟠 = Upcoming)
+- Dark mode support 🟢
+- Latex support 🟢
+- Windows Support 🟠
+- TODO support 🟠
+- Git versioning support 🟠
+- Export to other formats (PDF / Word / HTML / Latex) 🟠
+- Rich Email support 🟠
+- Online File Sync 🟠
+- Online collaboration 🟠
+
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
 - PyPI : https://pypi.org/project/minimark/0.0.1.2/#description
