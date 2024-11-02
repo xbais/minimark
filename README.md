@@ -43,6 +43,7 @@ To open a markdown file with minimark, simply...
 (🟢 = Impemented, 🟠 = Upcoming)
 - Dark mode support 🟢
 - Latex support 🟢
+- Mermaid Diagram Support 🟢
 - Windows Support 🟠
 - TODO support 🟠
 - Git versioning support 🟠
