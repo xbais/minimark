@@ -5,7 +5,10 @@
   <img src="./_resources/logo.jpeg" alt="Sublime's custom image" style='width:300px'/>
 </p>
 
-![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
+![Light Mode](_resources/light-mode.png)
+![Dark Mode](_resources/dark-mode.png)
+![Markdown Editor](_resources/markdown-editor.png)
+
 ## 🔷 Installation of Pre-requisites
 1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : 
   ```bash
