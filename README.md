@@ -40,17 +40,18 @@ To open a markdown file with minimark, simply...
 2. Within Kitty, use the command : `minimark -file /location/to/my_markdown_file.md`
 
 ## 🔷 Features
-(🟢 = Impemented, 🟠 = Upcoming)
+(🟢 = Impemented, 🔵 = May work, but hasn't been tested, 🟠 = Upcoming)
 - Dark mode support 🟢
 - Latex support 🟢
 - Mermaid Diagram Support 🟢
-- Windows Support 🟠
+- Windows Support 🔵
 - TODO support 🟠
 - Git versioning support 🟠
 - Export to other formats (PDF / Word / HTML / Latex) 🟠
 - Rich Email support 🟠
 - Online File Sync 🟠
 - Online collaboration 🟠
+- SSH support (can work over SSH) 🔵
 
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
