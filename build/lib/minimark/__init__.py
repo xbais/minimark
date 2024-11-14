@@ -365,6 +365,112 @@ def augment_img_path(path:str):
     else: # relative path
         return os.path.join(PARENT_PATH, path)
 
+def get_styled_element(word:str, style_state:dict)->Label:
+    global app_logger
+    element = Label(word) # remove last occurence of specifier when rendering
+    _classes = ''
+    _text_style = None
+    _text_style = ' '.join([_ for _ in style_state.keys() if style_state[_]])
+    _text_style = _text_style if _text_style else 'none' # If _text_style == '', then change _text_style to 'none'
+    
+    if 'highlight' in _text_style:
+        _text_style = _text_style.replace('highlight', '').strip()
+        _classes = 'inline_highlight'
+    if _text_style:    
+        element.styles.text_style = _text_style
+    element.classes = ' '.join([_classes, 'md_line_block'])
+    app_logger.log(_text_style)
+    return element, style_state
+
+def get_inline_md_blocks(input_string:str):
+    global app_logger
+    md_blocks = []
+
+    if input_string:    
+        # Render inline markdown
+        inline_markdown_specifiers = {'**':'bold', '*':'italic', '__':'underline', '`':'reverse', '~~':'strike', '==':'highlight'}
+        style_state = {'bold':False, 'italic':False, 'underline':False, 'reverse':False, 'highlight':False, 'strike':False}
+
+        app_logger.log(input_string)
+        
+        #for word in input_string.split(' '):
+        # Replace the specifiers in the word with a common mask
+        word = input_string # experimental
+        _mask_string = '@%mask%@'
+        _masked_word = word
+        _specifier_sequence = [] # Store the sequence of specifiers
+
+        for specifier in inline_markdown_specifiers.keys():
+            _masked_word = _masked_word.replace(specifier, _mask_string)
+        
+        _subwords = _masked_word.split(_mask_string)
+        
+        _ = ''
+        for subword_id in range(len(_subwords)):
+            subword = _subwords[subword_id]
+            _ += subword
+            if subword_id != len(_subwords)-1:
+                if not _:   
+                    specifier = word.split(_subwords[subword_id+1])[0] if _subwords[subword_id+1] else word.split(_)[-1]
+                else:
+                    specifier = word.replace(_,'',1).split(_subwords[subword_id+1])[0] if _subwords[subword_id+1] else word.split(_)[-1]
+                _ += specifier
+                _specifier_sequence.append(specifier)
+        
+        app_logger.log(f'Built sentence = {_}')
+        
+        app_logger.log(f'Specifier sequence = {_specifier_sequence}')
+
+        if len(_subwords) >= 1:
+            md_blocks.append(Label(_subwords[0], classes='md_line_block'))
+            app_logger.log('Added element', _subwords[0])
+        #else:
+        #    element, style_state = get_styled_element(word=_subwords[0], style_state=style_state)
+        #    md_blocks.append(element)  
+
+        if len(_subwords) > 1:  
+            #app_logger.log(_subwords[0])
+            
+            for subword_id in range(len(_subwords)-1):
+                subword = _subwords[subword_id+1]
+                specifier = _specifier_sequence[subword_id]
+                
+                style_state[inline_markdown_specifiers[specifier]] = not style_state[inline_markdown_specifiers[specifier]]
+                #word = word.replace(specifier, '', 1) # remove first occurence of specifier
+                
+                # TODO : Bold and italics styles compete with each other leading to italics where ever there is bold.
+                
+                # Add the word in relevant style
+                element, style_state = get_styled_element(word=subword, style_state=style_state)
+                #app_logger.log(style_state)
+                md_blocks.append(element)
+
+                if subword_id == len(_masked_word.split(_mask_string)) - 1:
+                    subword = _subwords[-1]
+                    style_state[inline_markdown_specifiers[specifier]] = not style_state[inline_markdown_specifiers[specifier]]
+                    # TODO : Bold and italics styles complete with each other leading to italics closure where ever there is bold closure.
+                    # Add the last word in relevant style
+                    element, style_state = get_styled_element(word=subword, style_state=style_state)
+                    md_blocks.append(element)
+        '''
+        # Add a space in relevant style
+        element = Label(' ')
+        _classes = ''
+        _text_style = ' '.join([_ for _ in style_state.keys() if style_state[_]])
+        _text_style = _text_style if _text_style else 'none' # If _text_style == '', then change _text_style to 'none'
+        if 'highlight' in _text_style:
+            _text_style = _text_style.replace('highlight', '').strip()
+            _classes += 'inline_highlight'
+        if _text_style:    
+            element.styles.text_style = _text_style
+        element.classes = ' '.join([_classes, 'md_line_block'])
+        md_blocks.append(element)
+        '''
+        #break
+    md_blocks += [Label('', classes='md_line_block')]    # Add a dummy to prevent extra spaces # TODO : fix this issue, this should not be required
+    container = Horizontal(*md_blocks, classes='md_line')
+    return container
+
 class MdRenderLine(Static):
     """A md block line widget."""
     def __init__(self, raw_line:str='', type:str=''):
@@ -376,7 +482,7 @@ class MdRenderLine(Static):
         global logger, app, node_counter, TOC_TREE, VIEW_MODE_SCREEN
         """Create child widgets"""
         if self.type == '':
-            yield Label(self.raw_line, classes=f'md_line')
+            yield get_inline_md_blocks(input_string=self.raw_line)
         elif self.type == 'newline':
             yield Label(self.raw_line, classes=f'md_line newline')
         elif self.type == 'hr':
@@ -386,7 +492,8 @@ class MdRenderLine(Static):
             counter = node_counter.get_counter()
             numeral = '.'.join([str(counter[f'h{_}']) for _ in range(int(self.type.replace('h','')),0,-1)][::-1])
             numeral = '.'.join([str(int(_)-1) for _ in numeral.split('.')])
-            element = Label(numeral + ' ) ' + self.raw_line, classes=f'md_line {self.type}')
+            element = get_inline_md_blocks(numeral + ' ) ' + self.raw_line)
+            element.classes =f'md_line {self.type}'
             _id = self.type + '_' + quick_hash(string=f'{(numeral + " " + self.raw_line).strip().lower()}')
             element.id = _id
             if self.type == 'h1' and element_count == 1:
@@ -412,13 +519,17 @@ class MdRenderLine(Static):
                 yield element
         elif self.type == 'ul':
             self.raw_line = self.raw_line.split('\n')
-            self.raw_line = '\n'.join(['▶ ' + _ for _ in self.raw_line])
-            yield Label(self.raw_line, classes=f'md_line {self.type}') #ListView(*list_elements)
+            self.raw_line = [get_inline_md_blocks('▶ ' + _) for _ in self.raw_line]
+            element = Container(*self.raw_line,)
+            element.classes=f'md_line {self.type}'
+            yield element
             #yield Markdown(self.raw_line, classes=f'md_line {self.type}')
         elif self.type == 'ol':
             self.raw_line = self.raw_line.split('\n')
-            self.raw_line = '\n'.join([f'{idx+1}. {self.raw_line[idx]}' for idx in range(len(self.raw_line))])
-            yield Label(self.raw_line, classes=f'md_line {self.type}') #ListView(*list_elements)
+            self.raw_line = [get_inline_md_blocks(f'{idx+1}. {self.raw_line[idx]}') for idx in range(len(self.raw_line))]
+            element = Container(*self.raw_line,)
+            element.classes=f'md_line {self.type}'
+            yield element
             #yield Markdown(self.raw_line, classes=f'md_line {self.type}')
         elif self.type.startswith('cb-'): # Code block
             try:
@@ -467,7 +578,11 @@ class MdRenderLine(Static):
                 app_logger.log(traceback.format_exc())
                 yield Label(f'{self.raw_line}\nERROR:\n{e}', classes='md_line render_error')
         elif self.type.startswith('bq'):
-            yield Label(f'{self.raw_line}', classes='md_line block_quote')
+            self.raw_line = self.raw_line.split('\n')
+            self.raw_line = [get_inline_md_blocks(_) for _ in self.raw_line]
+            element = Container(*self.raw_line)
+            element.classes ='md_line block_quote'
+            yield element
         elif self.type == 'table':
             table =  DataTable()
             table.border_title = f'Table {node_counter.plus(self.type)}'
@@ -530,7 +645,7 @@ class LoadingScreen(Screen):
         yield LoadingIndicator()
 
 class HelpScreen(Screen):
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("w", "open_in_browser", "Open In Browser"), ("f", "files", "File Nav Mode"), ('d', 'documentation', 'Documentation')]
+    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("w", "open_in_browser", "Open In Browser"), ('d', 'documentation', 'Documentation')]
     def compose(self) -> ComposeResult:
         yield Header()
         yield Footer()
@@ -544,17 +659,11 @@ class HelpScreen(Screen):
         """An action to toggle dark mode."""
         self.dark = not self.dark
 
-class NavScreen(Screen):
-    def compose(self) -> ComposeResult:
-        yield Header()
-        yield Footer()
-        yield DirectoryTree(PARENT_PATH)
-
 def is_path(string:str)->bool:
     return os.path.exists(string)
 
 class ViewModeScreen(Screen):
-    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("w", "open_in_browser", "Open In Browser"), ("p", "print", "Print to PDF"), ("e", "switch_to_edit", "Edit Mode"), ("f", "switch_to_nav", "File Nav Mode"), ('v', 'switch_to_view', 'View Mode'), ('h', 'help', 'Help')]
+    BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("w", "open_in_browser", "Open In Browser"), ("p", "print", "Print to PDF"), ("e", "switch_to_edit", "Edit Mode"), ('v', 'switch_to_view', 'View Mode'), ('h', 'help', 'Help')]
     
     def compose(self) -> ComposeResult:
         global logger, app, PARENT_PATH
@@ -1030,14 +1139,6 @@ class ViewModeScreen(Screen):
         EDIT_SCREEN = EditModeScreen()
         app.push_screen(EDIT_SCREEN)
         app.notify("Switched to Edit Mode", severity='information')
-    
-    def action_switch_to_nav(self) -> None:
-        """Action to switch to View Mode."""
-        global app, NAV_SCREEN
-        app.remove_existing_screen(NavScreen)
-        NAV_SCREEN = NavScreen()
-        app.push_screen(NAV_SCREEN)
-        app.notify("Switched to Nav Mode", severity='information')
 
 class SearchModeScreen(Screen):
     BINDINGS = [('escape', 'switch_to_view', 'Back to View Mode')]
@@ -1121,7 +1222,6 @@ class EditModeScreen(Screen):
             _.write(content)
     
     '''
-
     def save_document(self):
         global app
         # Get the content of the text area
@@ -1138,7 +1238,7 @@ class MiniMark(App):
     """A Textual app to render markdown (md) documents"""
 
     CSS_PATH = "data/main.tcss"
-    BINDINGS = [("r", "reload", "Reload Doc"), ("f", "switch_to_nav", "File Nav Mode")]
+    BINDINGS = [("r", "reload", "Reload Doc")]
 
     def __init__(self, start_screen:str='view'):
         super().__init__()
@@ -1151,8 +1251,6 @@ class MiniMark(App):
         
         if self.start_screen == 'view':    
             self.push_screen(ViewModeScreen())
-        elif self.start_screen == 'nav':
-            self.push_screen(NavScreen())
         elif self.start_screen == 'help':
             pass
             #self.push_screen(HelpScreen())
@@ -1160,19 +1258,6 @@ class MiniMark(App):
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
-        '''
-        def action_switch_to_view(self) -> None:
-            """Action to switch to View Mode."""
-            self.remove_existing_screen(EditModeScreen)
-            self.push_screen(EditModeScreen())
-            self.notify("Switched to View Mode", severity='information')
-
-        def action_switch_to_nav(self) -> None:
-            """Action to switch to View Mode."""
-            self.remove_existing_screen(NavScreen)
-            self.push_screen(NavScreen())
-            self.notify("Switched to Nav Mode", severity='information')
-        '''
 
     def action_reload(self):
         """Replace the screen with a fresh instance."""
@@ -1188,10 +1273,10 @@ class MiniMark(App):
             if isinstance(screen, screen_class):
                 self.pop_screen()  # Remove the screen from the stack
 
-CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*17
+CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*16
 
 def main():
-    global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, NAV_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR
+    global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR
     
     CWD = get_cwd() #os.getcwd()
 
@@ -1225,7 +1310,6 @@ def main():
 
     # Initialise all Screens
     VIEW_MODE_SCREEN = ViewModeScreen()
-    NAV_SCREEN = NavScreen()
     HELP_SCREEN = HelpScreen()
     EDIT_SCREEN = EditModeScreen()
     SEARCH_SCREEN = SearchModeScreen()

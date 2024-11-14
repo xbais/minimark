@@ -193,7 +193,6 @@ DirectoryTree {
 }
 
 
-
 #md_content {
     column-span: 3;
     row-span:1;
@@ -212,14 +211,33 @@ DirectoryTree {
     padding: 0 2;
 }
 
+Horizontal {
+    height: auto;
+    padding: 0 0;
+    margin: 0 0;
+    min-height:0%;
+}
+
+.inline_highlight {
+    background: yellow;
+    color:black;
+}
+
 .md_line {
     width:100%;
-    min-height:0;
+    height:auto;
     border: none;
     content-align: left middle;
     align: left middle;
     margin: 0 0;
-    padding: 0;
+    padding: 0 0;
+}
+
+.md_line_block {
+    padding: 0 0;
+    margin: 0 0;
+    width:auto;
+    height:auto;
 }
 
 .h1 {
@@ -274,6 +292,14 @@ DirectoryTree {
     align: center middle;
     padding: 1 1;
     text-style: bold ;
+}
+
+.ul {
+    width:100%;
+}
+
+.ol {
+    width:100%;
 }
 
 Image {

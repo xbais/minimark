@@ -82,8 +82,30 @@ graph TD;
 A[Start]-->B[Finish];
 ```
 
-#### Level 4 Heading
-Some text
+#### Level 4 Heading (Testing Inline Markdown) : ==Highlight== **Bold** *Italics* ~~Strike~~ `Code` __underline__
+Testing inline MD in unordered list:
+- ==Highlight==
+- **Bold**
+- *Italics*
+- __underline__
+- `inline code`
+- ~~strike through~~
+
+Testing inline MD in ordered list:
+1. ==Highlight==
+1. **Bold**
+1. *Italics*
+1. __underline__
+1. `inline code`
+1. ~~strike through~~
+
+Testing inline markdown within a paragraph:
+==Highlight== **Bold** *Italics* __underline__ `inline code` ~~strike through~~
+
+Testing markdown within block quote:
+> This is a block quote.
+> Does markdown work within it ? ==Highlight== **Bold** *Italics* `code` ~~strike~~ __underline__
+> Does it work?
 
 ##### Level 5 Heading
 Some text
