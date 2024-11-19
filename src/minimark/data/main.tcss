@@ -60,6 +60,12 @@ ViewModeScreen {
     width:100%;
 }
 
+#search_box {
+    border: solid white;
+    border-title-color: auto;
+    width: 100%;
+}
+
 #create_file_btn {
     background: rgba(0,255,0,0.5);
     border: solid rgba(0,255,0,0.5);
@@ -104,10 +110,6 @@ ViewModeScreen {
     align: center middle;
     padding: 1 1;
     margin: 1 1;
-}
-
-#search_box {
-    border: solid black;
 }
 
 #file_options_container_toc {
@@ -176,12 +178,12 @@ ViewModeScreen {
 }
 
 DirectoryTree {
-    color:black;
     width:100%;
     align: center middle;
     padding: 1 1;
     margin: 1 1;
-    border: solid black;
+    border: solid white;
+    border_title_color: auto;
 }
 
 .img_container {
@@ -221,6 +223,11 @@ Horizontal {
 .inline_highlight {
     background: yellow;
     color:black;
+}
+
+.inline_error {
+    background: red;
+    color: white;
 }
 
 .md_line {
@@ -343,8 +350,8 @@ DataTable {
 }
 
 .block_quote {
-    border: solid white;
-    background: rgba(0,0,255,0.2);
+    border: solid black;
+    background: lightyellow;
     opacity:1;
     color: black;
     max-width: 100%;

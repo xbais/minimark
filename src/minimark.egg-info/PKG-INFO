@@ -33,7 +33,10 @@ Requires-Dist: requests
   <img src="./_resources/logo.jpeg" alt="Sublime's custom image" style='width:300px'/>
 </p>
 
-![image](https://github.com/user-attachments/assets/7dd69419-4c7b-41db-a1fd-5439c8a5a222)
+![Light Mode](_resources/light-mode.png)
+![Dark Mode](_resources/dark-mode.png)
+![Markdown Editor](_resources/markdown-editor.png)
+
 ## 🔷 Installation of Pre-requisites
 1. Install [NVM Package Manager](https://github.com/nvm-sh/nvm) : 
   ```bash
@@ -51,7 +54,33 @@ Requires-Dist: requests
   ```bash
   sudo apt install ripgrep
   ```
-
+5. Install [Kitty](https://sw.kovidgoyal.net/kitty/) :
+  ```bash
+  sudo apt install kitty
+  ```
 ## 🔷 Installation & Usage
 - For Ubuntu < 24.04 LTS : `pip3 install minimark`
 - For Ubuntu == 24.04 LTS : `pip3 install minimark --break-system-packages` (NOTE : Ubuntu 24 does not allow installing any python packages without the additional flag, but rest assured : IT IS SAFE, if you dont want this, you can install Minimark in a separate Python venv)
+
+### **Usage**
+To open a markdown file with minimark, simply... 
+1. Open the Kitty terminal emulator.
+2. Within Kitty, use the command : `minimark -file /location/to/my_markdown_file.md`
+
+## 🔷 Features
+(🟢 = Impemented, 🔵 = May work, but hasn't been tested, 🟠 = Upcoming)
+- Dark mode support 🟢
+- Latex support 🟢
+- Mermaid Diagram Support 🟢
+- Windows Support 🔵
+- TODO support 🟠
+- Git versioning support 🟠
+- Export to other formats (PDF / Word / HTML / Latex) 🟠
+- Rich Email support 🟠
+- Online File Sync 🟠
+- Online collaboration 🟠
+- SSH support (can work over SSH) 🔵
+
+## 🔷 Links
+- Official Webpage & Documentation : https://xbais.net/minimark.html
+- PyPI : https://pypi.org/project/minimark/0.0.1.2/#description

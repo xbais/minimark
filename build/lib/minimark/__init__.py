@@ -376,6 +376,9 @@ def get_styled_element(word:str, style_state:dict)->Label:
     if 'highlight' in _text_style:
         _text_style = _text_style.replace('highlight', '').strip()
         _classes = 'inline_highlight'
+    if 'error' in _text_style:
+        _text_style = _text_style.replace('error', '').strip()
+        _classes = 'inline_error'
     if _text_style:    
         element.styles.text_style = _text_style
     element.classes = ' '.join([_classes, 'md_line_block'])
@@ -388,8 +391,8 @@ def get_inline_md_blocks(input_string:str):
 
     if input_string:    
         # Render inline markdown
-        inline_markdown_specifiers = {'**':'bold', '*':'italic', '__':'underline', '`':'reverse', '~~':'strike', '==':'highlight'}
-        style_state = {'bold':False, 'italic':False, 'underline':False, 'reverse':False, 'highlight':False, 'strike':False}
+        inline_markdown_specifiers = {'**':'bold', '*':'italic', '__':'underline', '`':'reverse', '~~':'strike', '==':'highlight', '!!':'error'}
+        style_state = {'bold':False, 'italic':False, 'underline':False, 'reverse':False, 'strike':False, 'highlight':False, 'error':False}
 
         app_logger.log(input_string)
         
@@ -405,19 +408,44 @@ def get_inline_md_blocks(input_string:str):
         
         _subwords = _masked_word.split(_mask_string)
         
+        '''
         _ = ''
+        unused_specifiers = [] # If two specifiers are found one after another, this will store specifiers that have not yet been processed
         for subword_id in range(len(_subwords)):
             subword = _subwords[subword_id]
             _ += subword
             if subword_id != len(_subwords)-1:
                 if not _:   
                     specifier = word.split(_subwords[subword_id+1])[0] if _subwords[subword_id+1] else word.split(_)[-1]
+                    _specifier_set = set(specifier)
+                    if len(_specifier_set) > 1:
+                        for _char in specifier:
+                            
                 else:
                     specifier = word.replace(_,'',1).split(_subwords[subword_id+1])[0] if _subwords[subword_id+1] else word.split(_)[-1]
                 _ += specifier
                 _specifier_sequence.append(specifier)
-        
-        app_logger.log(f'Built sentence = {_}')
+        '''
+        _remaining_word = word
+        _subword_id = 0
+        while _remaining_word:
+            _subword = _subwords[_subword_id]
+            _len = len(_subword)
+            if _remaining_word[:_len] == _subword:
+                _remaining_word = _remaining_word[_len:]
+                _subword_id += 1
+            elif _remaining_word[:2] in inline_markdown_specifiers.keys():
+                _specifier_sequence.append(_remaining_word[:2])
+                _remaining_word = _remaining_word[2:]
+            elif _remaining_word[0] in inline_markdown_specifiers.keys():
+                _specifier_sequence.append(_remaining_word[0])
+                _remaining_word = _remaining_word[1:]
+            else:
+                app_logger.log('ERROR : cannot find specifier')
+                app_logger.log(f'_remaining_word = {_remaining_word} | _subword = {_subword}')
+                exit()
+            
+        #app_logger.log(f'Built sentence = {_}')
         
         app_logger.log(f'Specifier sequence = {_specifier_sequence}')
 
@@ -658,6 +686,7 @@ class HelpScreen(Screen):
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
+        pass
 
 def is_path(string:str)->bool:
     return os.path.exists(string)
@@ -666,7 +695,7 @@ class ViewModeScreen(Screen):
     BINDINGS = [("d", "toggle_dark", "Toggle dark mode"), ("w", "open_in_browser", "Open In Browser"), ("p", "print", "Print to PDF"), ("e", "switch_to_edit", "Edit Mode"), ('v', 'switch_to_view', 'View Mode'), ('h', 'help', 'Help')]
     
     def compose(self) -> ComposeResult:
-        global logger, app, PARENT_PATH
+        global logger, app, PARENT_PATH, md_file
         """Create child widgets for the app."""
         # Set the app to light mode
         self.dark = False
@@ -703,10 +732,10 @@ class ViewModeScreen(Screen):
                     id='search_box'
                 )
                 _search_box.border_title='🔍 Search'
-                _search_box.styles.border_title_color='black'
-                _search_box.styles.width='100%'
+                #_search_box.styles.border_title_color='black'
+                #_search_box.styles.width='100%'
                 #_validator_response = Button('', id='validator_response', disabled=True)
-                _file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn = Button('➕ F', id='create_file_btn', tooltip='Create File'), Button('➕ D', id='create_folder_btn', tooltip='Create Directory'), Button('➖', id='delete_file_btn', tooltip='Delete File / Folder')
+                _file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn = Button('+ File', id='create_file_btn', tooltip='Create File'), Button('+ Dir', id='create_folder_btn', tooltip='Create Directory'), Button('-', id='delete_file_btn', tooltip='Delete File / Folder')
                 _file_options_delete_btn.border_title='CAREFULL'
                 _file_options = Container(_file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn, id = 'file_options_container')
                 _open_in_file_manager_btn = Button('Open in File Manager', id='open_in_file_manager', tooltip='Open selected file / directory in system file manager / application.')
@@ -906,7 +935,6 @@ class ViewModeScreen(Screen):
                 continue
             else:
                 processed_contents.append([raw_line, ''])
-
 
         rendered_contents = [MdRenderLine(raw_line, type=_type) for raw_line, _type in processed_contents] 
         container = ScrollableContainer(*rendered_contents)
@@ -1118,10 +1146,11 @@ class ViewModeScreen(Screen):
 
     @on(DirectoryTree.FileSelected)
     def open_file(self, event: DirectoryTree.FileSelected) -> None:
-        global app, md_file
+        global app, md_file, PARENT_PATH
         if str(event.path).split('.')[-1] in ['md', 'xmd']:
             app.notify(f'Loaded new file : {event.path}', title='New File Loaded')
             md_file = event.path
+            PARENT_PATH = str(Path(md_file).parent.absolute())
             self.reload_screen()
         else:
             os.system(f'xdg-open {event.path}')
@@ -1200,7 +1229,6 @@ class EditModeScreen(Screen):
             content = _.read()
 
         # Create the editor
-        
         self.text_area = TextArea(text=content) #TextArea.code_editor(text=content)
         self.text_area.language = "markdown"
         self.text_area.read_only, self.text_area.show_line_numbers = False, True
@@ -1257,7 +1285,8 @@ class MiniMark(App):
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
-        self.dark = not self.dark
+        #self.dark = not self.dark
+        pass
 
     def action_reload(self):
         """Replace the screen with a fresh instance."""
