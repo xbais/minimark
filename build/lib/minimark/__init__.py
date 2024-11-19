@@ -1316,6 +1316,10 @@ def main():
     args = parser.parse_args()
     md_file = args.file
     if md_file:
+        if not os.path.isfile(md_file):
+            # Create empty file
+            with open(md_file, 'w') as _:
+                _.write('')
         PARENT_PATH = CWD if '/' not in md_file else '/'.join(md_file.split('/')[:-1])
         app = MiniMark()
     else:
