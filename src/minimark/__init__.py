@@ -1055,7 +1055,7 @@ class ViewModeScreen(Screen):
 
     @on(Button.Pressed)
     def create_delete_file_or_folder(self, event: Button.Pressed) -> None:
-        global app
+        global app, PARENT_PATH
         button_id = event.button.id
         file_or_folder = self.query_one('#search_box').value
         if button_id == 'create_folder_btn':
@@ -1093,6 +1093,7 @@ class ViewModeScreen(Screen):
                 os.system(f'xdg-open {file_or_folder}')
                 app.notify('Opened in System Application')
         _dir_tree = self.query_one(DirectoryTree)
+        _dir_tree.path = Path(PARENT_PATH)
         _dir_tree.refresh()
 
     @on(Tree.NodeSelected)
@@ -1160,6 +1161,7 @@ class ViewModeScreen(Screen):
     def open_folder(self, event: DirectoryTree.DirectorySelected) -> None:
         global app
         self.query_one(Input).value = str(event.path)
+        # TODO : if index.md exists within the folder, we can open the index.md 
 
     def action_switch_to_edit(self) -> None:
         """Action to switch to Edit Mode."""

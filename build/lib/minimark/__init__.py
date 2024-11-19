@@ -431,13 +431,13 @@ def get_inline_md_blocks(input_string:str):
         while _remaining_word:
             _subword = _subwords[_subword_id]
             _len = len(_subword)
-            if _remaining_word[:_len] == _subword:
+            if _remaining_word[:_len] == _subword: # remaining_word starts with word
                 _remaining_word = _remaining_word[_len:]
                 _subword_id += 1
-            elif _remaining_word[:2] in inline_markdown_specifiers.keys():
+            elif _remaining_word[:2] in inline_markdown_specifiers.keys(): # remaining_word starts with a 2-letter md specifier
                 _specifier_sequence.append(_remaining_word[:2])
                 _remaining_word = _remaining_word[2:]
-            elif _remaining_word[0] in inline_markdown_specifiers.keys():
+            elif _remaining_word[0] in inline_markdown_specifiers.keys(): # remaining_word starts with a 1-letter md specifier
                 _specifier_sequence.append(_remaining_word[0])
                 _remaining_word = _remaining_word[1:]
             else:
@@ -1055,7 +1055,7 @@ class ViewModeScreen(Screen):
 
     @on(Button.Pressed)
     def create_delete_file_or_folder(self, event: Button.Pressed) -> None:
-        global app
+        global app, PARENT_PATH
         button_id = event.button.id
         file_or_folder = self.query_one('#search_box').value
         if button_id == 'create_folder_btn':
@@ -1093,6 +1093,7 @@ class ViewModeScreen(Screen):
                 os.system(f'xdg-open {file_or_folder}')
                 app.notify('Opened in System Application')
         _dir_tree = self.query_one(DirectoryTree)
+        _dir_tree.path = Path(PARENT_PATH)
         _dir_tree.refresh()
 
     @on(Tree.NodeSelected)
@@ -1160,6 +1161,7 @@ class ViewModeScreen(Screen):
     def open_folder(self, event: DirectoryTree.DirectorySelected) -> None:
         global app
         self.query_one(Input).value = str(event.path)
+        # TODO : if index.md exists within the folder, we can open the index.md 
 
     def action_switch_to_edit(self) -> None:
         """Action to switch to Edit Mode."""
