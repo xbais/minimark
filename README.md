@@ -52,6 +52,7 @@ To open a markdown file with minimark, simply...
 - Online File Sync 🟠
 - Online collaboration 🟠
 - SSH support (can work over SSH) 🔵
+- Support for emoji short-codes 🟢
 
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
