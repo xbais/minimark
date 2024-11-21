@@ -54,6 +54,8 @@ To open a markdown file with minimark, simply...
 - SSH support (can work over SSH) 🔵
 - Support for emoji short-codes 🟢
 - Zotero support 🟠
+- TTS support 🟠
+- Hand-drawing support 🟠
 
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
