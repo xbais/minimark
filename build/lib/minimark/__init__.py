@@ -8,7 +8,7 @@ import numpy as np
 import argparse
 from textual import on
 from textual.app import App, ComposeResult
-from textual.containers import ScrollableContainer, Container, Vertical, Horizontal
+from textual.containers import ScrollableContainer, Container, Vertical, Horizontal, Grid
 from textual.validation import Function, Number, ValidationResult, Validator
 from textual.widgets import LoadingIndicator, Tree, Button, Footer, Header, Static, Label, ListItem, ListView, TextArea, DataTable, Rule, Markdown, DirectoryTree, Input, Pretty, TabbedContent, TabPane
 from PIL import Image as PILImage # pillow==latest
@@ -39,6 +39,13 @@ from textual.widgets import ProgressBar
 import asyncio
 import traceback
 from pathlib import Path
+
+
+#### GLOBALS ####
+CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*16
+CURRENT_ROW_MD_CONTENT_WIDTH, CURRENT_ROW_WORD_LIST = 0, []
+APP_SIZE = [0,0]
+#################
 
 def get_cwd() -> str:
     # Get the directory of the currently executing script
@@ -385,6 +392,52 @@ def get_styled_element(word:str, style_state:dict)->Label:
     app_logger.log(_text_style)
     return element, style_state
 
+def finish_md_line():
+    global CURRENT_ROW_MD_CONTENT_WIDTH, CURRENT_ROW_WORD_LIST
+    _vert_list = [Horizontal(*CURRENT_ROW_WORD_LIST, classes='md_line'),]
+    CURRENT_ROW_MD_CONTENT_WIDTH = 0
+    CURRENT_ROW_WORD_LIST = []
+    return _vert_list
+
+def break_subwords(subword=None):
+    global CURRENT_ROW_MD_CONTENT_WIDTH, CURRENT_ROW_WORD_LIST
+    '''
+    This fn breaks down subwords and returns them as a list of Label elements 
+    '''
+    if isinstance(subword, Label):
+        style, _classes = subword.styles.text_style, ' '.join(list(subword._classes))
+        subword = subword.renderable
+        _sub_subwords = subword.split(' ')
+        app_logger.log(subword, style, _classes)
+    elif isinstance(subword, str):
+        _sub_subwords = subword.split(' ')
+        _classes = ''
+        style = 'none'
+    _list = []
+    for idx in range(len(_sub_subwords)):
+        _ = [Label(_sub_subwords[idx], classes=f'md_word {_classes}'), Label(' ', classes=f'md_word {_classes}')]
+        #if style:
+        _[0].styles.text_style, _[1].styles.text_style = style, style
+        _list += _
+    
+    # Get the vertical elements
+    available_width = int(APP_SIZE[0] * (3/4)) - 10 # 10 is a buffer # units = chars
+    _vert_list = []
+    #_current_width = 0
+    #_current_word_list = []
+    for _element in _list:
+        #app_logger.log(_element.styles.width, str(_element.renderable))
+        _element_len = len(_element.renderable)
+        if CURRENT_ROW_MD_CONTENT_WIDTH + _element_len > available_width: 
+            _vert_list += finish_md_line()
+        CURRENT_ROW_MD_CONTENT_WIDTH += _element_len
+        CURRENT_ROW_WORD_LIST.append(_element)
+    #if CURRENT_ROW_MD_CONTENT_WIDTH:
+    #    _vert_list += finish_md_line()
+        
+    return _vert_list #_vert_list
+        
+
 def get_inline_md_blocks(input_string:str):
     global app_logger
     md_blocks = []
@@ -428,18 +481,18 @@ def get_inline_md_blocks(input_string:str):
         '''
         _remaining_word = word
         _subword_id = 0
-        while _remaining_word:
+        while _remaining_word and _subword_id < len(_subwords):
             _subword = _subwords[_subword_id]
             _len = len(_subword)
-            if _remaining_word[:_len] == _subword: # remaining_word starts with word
-                _remaining_word = _remaining_word[_len:]
-                _subword_id += 1
-            elif _remaining_word[:2] in inline_markdown_specifiers.keys(): # remaining_word starts with a 2-letter md specifier
+            if _remaining_word[:2] in inline_markdown_specifiers.keys(): # remaining_word starts with a 2-letter md specifier
                 _specifier_sequence.append(_remaining_word[:2])
                 _remaining_word = _remaining_word[2:]
             elif _remaining_word[0] in inline_markdown_specifiers.keys(): # remaining_word starts with a 1-letter md specifier
                 _specifier_sequence.append(_remaining_word[0])
                 _remaining_word = _remaining_word[1:]
+            elif _remaining_word[:_len] == _subword: # remaining_word starts with word
+                _remaining_word = _remaining_word[_len:]
+                _subword_id += 1
             else:
                 app_logger.log('ERROR : cannot find specifier')
                 app_logger.log(f'_remaining_word = {_remaining_word} | _subword = {_subword}')
@@ -450,15 +503,11 @@ def get_inline_md_blocks(input_string:str):
         app_logger.log(f'Specifier sequence = {_specifier_sequence}')
 
         if len(_subwords) >= 1:
-            md_blocks.append(Label(_subwords[0], classes='md_line_block'))
-            app_logger.log('Added element', _subwords[0])
-        #else:
-        #    element, style_state = get_styled_element(word=_subwords[0], style_state=style_state)
-        #    md_blocks.append(element)  
+            #md_blocks.append(Label(_subwords[0], classes='md_line_block'))
+            md_blocks += break_subwords(_subwords[0])
+            app_logger.log('Added element', _subwords[0]) 
 
         if len(_subwords) > 1:  
-            #app_logger.log(_subwords[0])
-            
             for subword_id in range(len(_subwords)-1):
                 subword = _subwords[subword_id+1]
                 specifier = _specifier_sequence[subword_id]
@@ -470,8 +519,8 @@ def get_inline_md_blocks(input_string:str):
                 
                 # Add the word in relevant style
                 element, style_state = get_styled_element(word=subword, style_state=style_state)
-                #app_logger.log(style_state)
-                md_blocks.append(element)
+                #md_blocks.append(element)
+                md_blocks += break_subwords(subword=element)
 
                 if subword_id == len(_masked_word.split(_mask_string)) - 1:
                     subword = _subwords[-1]
@@ -479,7 +528,8 @@ def get_inline_md_blocks(input_string:str):
                     # TODO : Bold and italics styles complete with each other leading to italics closure where ever there is bold closure.
                     # Add the last word in relevant style
                     element, style_state = get_styled_element(word=subword, style_state=style_state)
-                    md_blocks.append(element)
+                    #md_blocks.append(element)
+                    md_blocks += break_subwords(subword=element)
         '''
         # Add a space in relevant style
         element = Label(' ')
@@ -495,8 +545,9 @@ def get_inline_md_blocks(input_string:str):
         md_blocks.append(element)
         '''
         #break
-    md_blocks += [Label('', classes='md_line_block')]    # Add a dummy to prevent extra spaces # TODO : fix this issue, this should not be required
-    container = Horizontal(*md_blocks, classes='md_line')
+    md_blocks += finish_md_line() + [Label('', classes='md_line_block')]    # Add a dummy to prevent extra spaces # TODO : fix this issue, this should not be required
+    container = Vertical(*md_blocks)
+    #container = Grid(*md_blocks)
     return container
 
 class MdRenderLine(Static):
@@ -721,7 +772,9 @@ class ViewModeScreen(Screen):
                     "#3366bb",
                     "#663399",
                 )
-                _progress_update = Container(ProgressBar(id='progress_bar', gradient=gradient), id='progress_update')
+
+                _history_options_back_btn, _history_options_reload_btn, _file_options_next_btn = Button('Back', id='history_back_btn', tooltip='Go to previous file'), Button('Reload', id='history_reload_btn', tooltip='Reload document'), Button('Next', id='history_next_btn', tooltip='Go to next file')
+                _history_options = Container(_history_options_back_btn, _history_options_reload_btn, _file_options_next_btn, id='history_options_container')
                 _search_box = Input(
                     placeholder="Folder Location / Query",
                     validators=[ 
@@ -735,14 +788,20 @@ class ViewModeScreen(Screen):
                 #_search_box.styles.border_title_color='black'
                 #_search_box.styles.width='100%'
                 #_validator_response = Button('', id='validator_response', disabled=True)
+                
+                
+                _progress_update = Container(ProgressBar(id='progress_bar', gradient=gradient), id='progress_update')
+                
+                
                 _file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn = Button('+ File', id='create_file_btn', tooltip='Create File'), Button('+ Dir', id='create_folder_btn', tooltip='Create Directory'), Button('-', id='delete_file_btn', tooltip='Delete File / Folder')
                 _file_options_delete_btn.border_title='CAREFULL'
                 _file_options = Container(_file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn, id = 'file_options_container')
                 _open_in_file_manager_btn = Button('Open in File Manager', id='open_in_file_manager', tooltip='Open selected file / directory in system file manager / application.')
                 _dir_tree = DirectoryTree(PARENT_PATH)
+                _dir_tree.watch_path = True
                 _dir_tree.border_title='🖿 Directory Tree'
                 _dir_tree.styles.border_title_color='black'
-                dir_tree = ScrollableContainer(_search_box, _progress_update, _file_options, _dir_tree, _open_in_file_manager_btn, id='dir_tree')
+                dir_tree = ScrollableContainer(_history_options, _search_box, _progress_update, _file_options, _dir_tree, _open_in_file_manager_btn, id='dir_tree')
                 #dir_tree.styles.align = ['center', 'middle']
                 #dir_tree.styles.height = '100%'
                 #dir_tree.styles.width = '100%'
@@ -956,6 +1015,15 @@ class ViewModeScreen(Screen):
     def action_reload_screen(self):
         self.regenerate()
     '''
+
+    def get_md_content_size(self):
+        global MD_CONTENT_MAX_SIZE
+        '''
+        This function gets the height and width (in chars) of the md_content container, needed to render markdown
+        '''
+        MD_CONTENT_MAX_SIZE = [self.query_one('#md_content', ScrollableContainer).size.height, self.query_one('#md_content', ScrollableContainer).size.width]
+        return MD_CONTENT_MAX_SIZE
+    
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
@@ -1242,7 +1310,6 @@ class EditModeScreen(Screen):
         yield Header()
         yield Footer()
 
-    
     def on_text_area_changed(self):
         # Get the content of the text area
         content = self.text_area.text
@@ -1275,6 +1342,7 @@ class MiniMark(App):
         self.start_screen = start_screen
 
     async def on_mount(self) -> None:
+        global APP_SIZE
         self.action_toggle_dark()
         self.push_screen(HelpScreen())
         #self.push_screen(LoadingScreen()) # await
@@ -1284,6 +1352,14 @@ class MiniMark(App):
         elif self.start_screen == 'help':
             pass
             #self.push_screen(HelpScreen())
+        
+        # Get App size
+        APP_SIZE = list(self.screen.size)
+
+    async def on_resize(self, event):
+        global APP_SIZE
+        APP_SIZE = list(event.size)
+        #print(f"Resized: {new_width}x{new_height} characters")
 
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
@@ -1304,7 +1380,6 @@ class MiniMark(App):
             if isinstance(screen, screen_class):
                 self.pop_screen()  # Remove the screen from the stack
 
-CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*16
 
 def main():
     global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR

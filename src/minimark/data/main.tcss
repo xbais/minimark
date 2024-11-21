@@ -33,6 +33,10 @@ ViewModeScreen {
     grid-size: 4 1;
 }
 
+Vertical {
+    height: auto;
+}
+
 .full_text_search_result {
     height: auto;
 }
@@ -50,7 +54,7 @@ ViewModeScreen {
 
 #progress_update {
     height: 2;
-    color: black;
+    color: auto;
 }
 
 #file_options_container {
@@ -58,12 +62,51 @@ ViewModeScreen {
     grid-size:3 1;
     height: auto;
     width:100%;
+    margin: 0 0;
 }
 
 #search_box {
     border: solid white;
     border-title-color: auto;
     width: 100%;
+}
+
+#history_options_container {
+    layout: grid;
+    grid-size:3 1;
+    height: auto;
+    width:100%;
+    border: none;
+}
+
+#history_back_btn {
+    background: darkblue;
+    border: solid darkblue;
+    color: white;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#history_reload_btn {
+    background: lightblue;
+    border: solid darkblue;
+    color: black;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
+}
+
+#history_next_btn {
+    background: darkblue;
+    border: solid darkblue;
+    color: white;
+    column-span: 1;
+    row-span: 1;
+    width:100%;
+    margin: 0 1;
 }
 
 #create_file_btn {
@@ -171,6 +214,7 @@ ViewModeScreen {
 
 #dir_tree_tab {
     hatch: left black 45%; 
+    padding: 0 0;
 }
 
 #toc_tree_tab {
@@ -198,6 +242,7 @@ DirectoryTree {
 #md_content {
     column-span: 3;
     row-span:1;
+    min-height:100h;
 }
 
 #tabs {
@@ -234,10 +279,10 @@ Horizontal {
     width:100%;
     height:auto;
     border: none;
-    content-align: left middle;
-    align: left middle;
     margin: 0 0;
     padding: 0 0;
+    content-align: left middle;
+    align: left middle;
 }
 
 .md_line_block {
@@ -245,6 +290,11 @@ Horizontal {
     margin: 0 0;
     width:auto;
     height:auto;
+}
+
+.md_word {
+    padding: 0 0;
+    margin: 0 0;
 }
 
 .h1 {
