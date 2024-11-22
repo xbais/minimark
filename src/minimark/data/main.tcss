@@ -80,8 +80,6 @@ Vertical {
 }
 
 #history_back_btn {
-    background: darkblue;
-    border: solid darkblue;
     color: white;
     column-span: 1;
     row-span: 1;
@@ -90,9 +88,7 @@ Vertical {
 }
 
 #history_reload_btn {
-    background: lightblue;
-    border: solid darkblue;
-    color: black;
+    color: white;
     column-span: 1;
     row-span: 1;
     width:100%;
@@ -100,8 +96,6 @@ Vertical {
 }
 
 #history_next_btn {
-    background: darkblue;
-    border: solid darkblue;
     color: white;
     column-span: 1;
     row-span: 1;
@@ -131,7 +125,7 @@ Vertical {
 
 #delete_file_btn {
     background: rgba(255,30,0,0.8);
-    color: black;
+    color: white;
     column-span: 1;
     row-span: 1;
     width:100%;
@@ -248,6 +242,7 @@ DirectoryTree {
 #tabs {
     row-span: 1;
     column-span: 1;
+    background: rgba(40,40,40,1);
 }
 
 #dir_tree {

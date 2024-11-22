@@ -39,7 +39,9 @@ from textual.widgets import ProgressBar
 import asyncio
 import traceback
 from pathlib import Path
-
+from gtts import gTTS
+import asyncio
+from playsound import playsound
 
 #### GLOBALS ####
 CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*16
@@ -47,6 +49,9 @@ CURRENT_ROW_MD_CONTENT_WIDTH, CURRENT_ROW_WORD_LIST = 0, []
 APP_SIZE = [0,0]
 HISTORY = []
 #################
+
+async def play_audio(file_path: str):
+    await asyncio.to_thread(playsound, file_path)
 
 class history():
     '''
@@ -809,7 +814,7 @@ class ViewModeScreen(Screen):
                     "#663399",
                 )
 
-                _history_options_back_btn, _history_options_reload_btn, _history_options_next_btn = Button('Back', id='history_back_btn', tooltip='Go to previous file'), Button('Reload', id='history_reload_btn', tooltip='Reload document'), Button('Next', id='history_next_btn', tooltip='Go to next file')
+                _history_options_back_btn, _history_options_reload_btn, _history_options_next_btn = Button('❰==', id='history_back_btn', tooltip='Go to previous file'), Button('⚪', id='history_reload_btn', tooltip='Reload document'), Button('==❱', id='history_next_btn', tooltip='Go to next file')
                 _history_options = Container(_history_options_back_btn, _history_options_reload_btn, _history_options_next_btn, id='history_options_container')
                 _search_box = Input(
                     placeholder="Folder Location / Query",
@@ -829,7 +834,7 @@ class ViewModeScreen(Screen):
                 _progress_update = Container(ProgressBar(id='progress_bar', gradient=gradient), id='progress_update')
                 
                 
-                _file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn = Button('+ File', id='create_file_btn', tooltip='Create File'), Button('+ Dir', id='create_folder_btn', tooltip='Create Directory'), Button('-', id='delete_file_btn', tooltip='Delete File / Folder')
+                _file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn = Button('🞧 File', id='create_file_btn', tooltip='Create File'), Button('🞧 Dir', id='create_folder_btn', tooltip='Create Directory'), Button('🞮', id='delete_file_btn', tooltip='Delete File / Folder')
                 _file_options_delete_btn.border_title='CAREFULL'
                 _file_options = Container(_file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn, id = 'file_options_container')
                 _open_in_file_manager_btn = Button('Open in File Manager', id='open_in_file_manager', tooltip='Open selected file / directory in system file manager / application.')
@@ -869,7 +874,7 @@ class ViewModeScreen(Screen):
                 dir_tree_toc = ScrollableContainer(tree, id='dir_tree_toc') # _search_box_toc,
                 yield dir_tree_toc
             with TabPane('Options', id='options'):
-                yield Container(Button('Export to PDF',id='export_to_pdf'))
+                yield ScrollableContainer(Button('TTS', id='tts'), Button('PDF Export',id='export_to_pdf'))
         
         #yield dir_tree
         
@@ -1165,7 +1170,7 @@ class ViewModeScreen(Screen):
         self.reload_screen()
 
     @on(Button.Pressed)
-    def create_delete_file_or_folder(self, event: Button.Pressed) -> None:
+    async def create_delete_file_or_folder(self, event: Button.Pressed) -> None:
         global app, PARENT_PATH, HISTORY
         button_id = event.button.id
         file_or_folder = self.query_one('#search_box').value
@@ -1213,6 +1218,14 @@ class ViewModeScreen(Screen):
             # Set history
             HISTORY.next()
             self.load()
+        elif button_id == 'tts':
+            # Generate mp3 file
+            with open(md_file, 'r') as _:
+                data = _.read()
+            tts = gTTS(data, lang="en")
+            audio_path = os.path.join(CACHE_DIR, f'tts-audio_{quick_hash(string=data)}.mp3')
+            tts.save(audio_path)
+            await play_audio(audio_path)
 
         _dir_tree = self.query_one(DirectoryTree)
         _dir_tree.path = Path(PARENT_PATH)

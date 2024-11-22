@@ -33,7 +33,7 @@ except (IOError, ImportError):
 
 
 setup(name='minimark',
-    version = '0.0.1.2',
+    version = '0.0.2.0',
     description='MiniMark : The CLI Markdown Editor / Viewer',
     long_description_content_type = 'text/markdown',
     long_description=long_description,
