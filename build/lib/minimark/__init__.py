@@ -45,7 +45,46 @@ from pathlib import Path
 CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR = [None]*16
 CURRENT_ROW_MD_CONTENT_WIDTH, CURRENT_ROW_WORD_LIST = 0, []
 APP_SIZE = [0,0]
+HISTORY = []
 #################
+
+class history():
+    '''
+    This class keeps track of the history of files being opened
+    '''
+    def __init__(self):
+        self.data = [] # will store the history
+        self.position = 0 # will keep track of the position of current doc in history
+
+    def add(self, path:str):
+        # Add a new path to the history
+        if self.position == 0:
+            self.data.append(path)
+        elif self.position < 0:
+            self.data = self.data[:-self.position]
+            self.position = 0
+            self.data.append(path)
+    
+    def previous(self):
+        # Go to previous position
+        if self.position == - len(self.data)+1:
+            app_logger.log('This is the first file in history.')
+        else:
+            self.position -= 1
+    
+    def next(self):
+        # Go to next position
+        if self.position == 0:
+            app_logger.log('This is the last file in history.')
+        else:
+            self.position += 1
+
+    def get_path(self):
+        # Get the path of the current directory
+        global app_logger
+        app_logger.log(f'position = {self.position}, data = {self.data}')
+        return self.data[self.position-1]
+
 
 def get_cwd() -> str:
     # Get the directory of the currently executing script
@@ -423,8 +462,7 @@ def break_subwords(subword=None):
     # Get the vertical elements
     available_width = int(APP_SIZE[0] * (3/4)) - 10 # 10 is a buffer # units = chars
     _vert_list = []
-    #_current_width = 0
-    #_current_word_list = []
+
     for _element in _list:
         #app_logger.log(_element.styles.width, str(_element.renderable))
         _element_len = len(_element.renderable)
@@ -432,8 +470,6 @@ def break_subwords(subword=None):
             _vert_list += finish_md_line()
         CURRENT_ROW_MD_CONTENT_WIDTH += _element_len
         CURRENT_ROW_WORD_LIST.append(_element)
-    #if CURRENT_ROW_MD_CONTENT_WIDTH:
-    #    _vert_list += finish_md_line()
         
     return _vert_list #_vert_list
         
@@ -773,8 +809,8 @@ class ViewModeScreen(Screen):
                     "#663399",
                 )
 
-                _history_options_back_btn, _history_options_reload_btn, _file_options_next_btn = Button('Back', id='history_back_btn', tooltip='Go to previous file'), Button('Reload', id='history_reload_btn', tooltip='Reload document'), Button('Next', id='history_next_btn', tooltip='Go to next file')
-                _history_options = Container(_history_options_back_btn, _history_options_reload_btn, _file_options_next_btn, id='history_options_container')
+                _history_options_back_btn, _history_options_reload_btn, _history_options_next_btn = Button('Back', id='history_back_btn', tooltip='Go to previous file'), Button('Reload', id='history_reload_btn', tooltip='Reload document'), Button('Next', id='history_next_btn', tooltip='Go to next file')
+                _history_options = Container(_history_options_back_btn, _history_options_reload_btn, _history_options_next_btn, id='history_options_container')
                 _search_box = Input(
                     placeholder="Folder Location / Query",
                     validators=[ 
@@ -798,7 +834,7 @@ class ViewModeScreen(Screen):
                 _file_options = Container(_file_options_create_btn, _folder_options_create_btn, _file_options_delete_btn, id = 'file_options_container')
                 _open_in_file_manager_btn = Button('Open in File Manager', id='open_in_file_manager', tooltip='Open selected file / directory in system file manager / application.')
                 _dir_tree = DirectoryTree(PARENT_PATH)
-                _dir_tree.watch_path = True
+                #_dir_tree.watch_path = True
                 _dir_tree.border_title='🖿 Directory Tree'
                 _dir_tree.styles.border_title_color='black'
                 dir_tree = ScrollableContainer(_history_options, _search_box, _progress_update, _file_options, _dir_tree, _open_in_file_manager_btn, id='dir_tree')
@@ -1121,9 +1157,16 @@ class ViewModeScreen(Screen):
             await app_logger.async_log(f"An error occurred: {e}")
             await app_logger.async_log(traceback.format_exc())
 
+    def load(self):
+        global HISTORY, app_logger, md_file, PARENT_PATH
+        # Load screen to current path
+        md_file = HISTORY.get_path()
+        PARENT_PATH = str(Path(md_file).parent.absolute())
+        self.reload_screen()
+
     @on(Button.Pressed)
     def create_delete_file_or_folder(self, event: Button.Pressed) -> None:
-        global app, PARENT_PATH
+        global app, PARENT_PATH, HISTORY
         button_id = event.button.id
         file_or_folder = self.query_one('#search_box').value
         if button_id == 'create_folder_btn':
@@ -1160,6 +1203,17 @@ class ViewModeScreen(Screen):
             if os.path.exists(file_or_folder):    
                 os.system(f'xdg-open {file_or_folder}')
                 app.notify('Opened in System Application')
+        elif button_id == 'history_reload_btn':
+            self.reload_screen()
+        elif button_id == 'history_back_btn':
+            # Set history
+            HISTORY.previous()
+            self.load()
+        elif button_id == 'history_next_btn':
+            # Set history
+            HISTORY.next()
+            self.load()
+
         _dir_tree = self.query_one(DirectoryTree)
         _dir_tree.path = Path(PARENT_PATH)
         _dir_tree.refresh()
@@ -1218,9 +1272,8 @@ class ViewModeScreen(Screen):
         global app, md_file, PARENT_PATH
         if str(event.path).split('.')[-1] in ['md', 'xmd']:
             app.notify(f'Loaded new file : {event.path}', title='New File Loaded')
-            md_file = event.path
-            PARENT_PATH = str(Path(md_file).parent.absolute())
-            self.reload_screen()
+            HISTORY.add(str(event.path))
+            self.load()
         else:
             os.system(f'xdg-open {event.path}')
         self.query_one(Input).value = str(event.path)
@@ -1342,12 +1395,13 @@ class MiniMark(App):
         self.start_screen = start_screen
 
     async def on_mount(self) -> None:
-        global APP_SIZE
+        global APP_SIZE, HISTORY
         self.action_toggle_dark()
         self.push_screen(HelpScreen())
         #self.push_screen(LoadingScreen()) # await
         
-        if self.start_screen == 'view':    
+        if self.start_screen == 'view':
+            HISTORY.add(md_file)  
             self.push_screen(ViewModeScreen())
         elif self.start_screen == 'help':
             pass
@@ -1382,7 +1436,7 @@ class MiniMark(App):
 
 
 def main():
-    global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR
+    global CWD, PARENT_PATH, app_logger, app, print, TOC_TREE, node_counter, width_factor, VIEW_MODE_SCREEN, HELP_SCREEN, EDIT_SCREEN, SEARCH_SCREEN, search_results, _trash_dir, md_file, CACHE_DIR, HISTORY
     
     CWD = get_cwd() #os.getcwd()
 
@@ -1407,6 +1461,7 @@ def main():
 
     # Initialise doc tree
     TOC_TREE = TOC()
+    HISTORY = history()
 
     # Initialise logger
     app_logger = logger()
