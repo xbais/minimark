@@ -44,7 +44,7 @@ To open a markdown file with minimark, simply...
 - Dark mode support 🟢
 - Latex support 🟢
 - Mermaid Diagram Support 🟢
-- Windows Support 🔵
+- Windows Support 🔵 ([#19](https://github.com/xbais/minimark/issues/19))
 - TODO support 🟠
 - Git versioning support 🟠
 - Export to other formats (PDF / Word / HTML / Latex) 🟠
