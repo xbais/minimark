@@ -1,0 +1,2 @@
+[console_scripts]
+art = art.__main__:main

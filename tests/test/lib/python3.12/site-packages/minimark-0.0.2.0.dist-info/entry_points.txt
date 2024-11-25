@@ -1,0 +1,2 @@
+[console_scripts]
+minimark = minimark.__main__:main

@@ -2,5 +2,5 @@ __pycache__
 pyvenv_3.10.12
 .cache/*
 .logs
-tests
+.tests/*
 dev-manual.md
