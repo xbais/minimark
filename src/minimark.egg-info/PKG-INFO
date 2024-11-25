@@ -12,19 +12,21 @@ Classifier: Operating System :: POSIX :: Linux
 Requires-Python: >=3.6
 Description-Content-Type: text/markdown
 License-File: LICENSE
-Requires-Dist: numpy
+Requires-Dist: numpy==2.1.2
 Requires-Dist: argparse
-Requires-Dist: textual
-Requires-Dist: textual_image
-Requires-Dist: matplotlib
-Requires-Dist: pillow
-Requires-Dist: cairosvg
-Requires-Dist: tqdm
-Requires-Dist: art
-Requires-Dist: tree-sitter==0.21.3
+Requires-Dist: textual==0.85.1
+Requires-Dist: textual_image==0.6.6
+Requires-Dist: matplotlib==3.9.2
+Requires-Dist: pillow==11.0.0
+Requires-Dist: cairosvg==2.7.1
+Requires-Dist: tqdm==4.66.6
+Requires-Dist: art==6.3
+Requires-Dist: tree-sitter==0.20.4
 Requires-Dist: tree-sitter-languages==1.10.2
-Requires-Dist: asyncio
-Requires-Dist: requests
+Requires-Dist: asyncio==3.4.3
+Requires-Dist: requests==2.32.3
+Requires-Dist: playsound==1.3.0
+Requires-Dist: gTTS==2.5.4
 
 # MiniMark : The CLI Markdown Editor / Viewer
 ![OS](https://img.shields.io/badge/OS-Linux-green) ![Python Version](https://img.shields.io/pypi/pyversions/minimark) ![License](https://img.shields.io/github/license/xbais/minimark) ![version](https://img.shields.io/pypi/v/minimark)
@@ -72,7 +74,7 @@ To open a markdown file with minimark, simply...
 - Dark mode support 🟢
 - Latex support 🟢
 - Mermaid Diagram Support 🟢
-- Windows Support 🔵
+- Windows Support 🔵 ([#19](https://github.com/xbais/minimark/issues/19))
 - TODO support 🟠
 - Git versioning support 🟠
 - Export to other formats (PDF / Word / HTML / Latex) 🟠
@@ -82,7 +84,7 @@ To open a markdown file with minimark, simply...
 - SSH support (can work over SSH) 🔵
 - Support for emoji short-codes 🟢
 - Zotero support 🟠
-- TTS support 🟠
+- TTS support 🟢 (Basic [#16](https://github.com/xbais/minimark/issues/16))
 - Hand-drawing support 🟠
 
 ## 🔷 Links

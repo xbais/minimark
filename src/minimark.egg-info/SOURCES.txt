@@ -14,5 +14,6 @@ src/minimark/data/main.tcss
 src/minimark/data/puppeteer-config.json
 src/minimark/data/python_highlights.scm
 src/minimark/data/treesitter-grammar_repos.txt
+tests/test-md-highlight.py
 tests/test-mdmd.py
 tests/test-rich-image.py

@@ -56,6 +56,8 @@ setup(name='minimark',
         'tree-sitter-languages==1.10.2',
         'asyncio==3.4.3',
         'requests==2.32.3',
+        'playsound==1.3.0',
+        'gTTS==2.5.4',
     ],
     license='GPLv3',
     classifiers=[
