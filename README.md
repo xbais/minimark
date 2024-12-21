@@ -44,8 +44,8 @@ To open a markdown file with minimark, simply...
 ## 🔷 Features
 (🟢 = Impemented, 🔵 = May work, but hasn't been tested, 🟠 = Upcoming)
 - Dark mode support 🟢
-- Latex support 🟢
-- Mermaid Diagram Support 🟢
+- ⭐ Latex support 🟢
+- ⭐ Mermaid Diagram Support 🟢
 - Windows Support 🔵 ([#19](https://github.com/xbais/minimark/issues/19))
 - TODO support 🟠
 - Git versioning support 🟠
@@ -58,6 +58,7 @@ To open a markdown file with minimark, simply...
 - Zotero support 🟠
 - TTS support 🟢 (Basic [#16](https://github.com/xbais/minimark/issues/16))
 - Hand-drawing support 🟠
+- 🌟 ChatGPT and Generative AI integration
 
 ## 🔷 Links
 - Official Webpage & Documentation : https://xbais.net/minimark.html
