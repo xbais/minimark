@@ -1,5 +1,5 @@
 # 🌟 MiniMark 🌟 : The CLI Markdown Editor / Viewer
-## The FIRST Command-line markdown editor which can display IMAGES! 🖼️📸
+## The *FIRST* Command-line markdown editor which can display *IMAGES*! 🖼️📸
 
 ![OS](https://img.shields.io/badge/OS-Linux-green) ![Python Version](https://img.shields.io/pypi/pyversions/minimark) ![License](https://img.shields.io/github/license/xbais/minimark) ![version](https://img.shields.io/pypi/v/minimark)
 
