@@ -57,7 +57,7 @@ To open a markdown file with minimark, simply...
 - Support for emoji short-codes 🟢
 - Zotero support 🟠
 - TTS support 🟢 (Basic [#16](https://github.com/xbais/minimark/issues/16))
-- Hand-drawing support 🟠
+- Hand-drawing support 🟠 (Excalidraw)
 - 🌟 ChatGPT and Generative AI integration
 
 ## 🔷 Links
